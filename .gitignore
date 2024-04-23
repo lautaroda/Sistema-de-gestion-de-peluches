@@ -125,3 +125,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+dbmodel.png
+.env
+tempCodeRunnerFile.js
+User Management.postman_collection.json
+.DS_Store
