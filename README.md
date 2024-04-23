@@ -20,7 +20,7 @@ Necesitas tener instalado Node.js, npm y MongoDB en tu máquina local.
 Clona el repositorio y instala las dependencias del proyecto.
 
 ```bash
-git clone https://github.com/Sistema-de-gestion-de-peluches.git
+git clone https://github.com/lautaroda/Sistema-de-gestion-de-peluches.git
 cd Plushie-Management-System
 npm install
 ```
