@@ -1,5 +1,6 @@
 // controllers/plushieController.js
 const Plushie = require('../models/Plushie');
+const Customization = require('../models/Customization');
 
 exports.createPlushie = async (req, res) => {
     try {
@@ -47,7 +48,13 @@ exports.updatePlushie = async (req, res) => {
 exports.deletePlushie = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Eliminar personalizaciones asociadas
+        await Customization.deleteMany({ plushieId: id });
+
+        // Eliminar el peluche
         await Plushie.findByIdAndDelete(id);
+
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -55,6 +62,10 @@ exports.deletePlushie = async (req, res) => {
 };
 
 exports.getRanking = async (req, res) => {
-    const ranking = await Plushie.find().sort({ chosenCount: -1 });
-    res.json(ranking);
+    try {
+        const rankings = await Plushie.find().sort({ chosenCount: -1 });
+        res.status(200).json(rankings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };

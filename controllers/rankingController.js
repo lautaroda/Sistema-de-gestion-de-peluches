@@ -21,18 +21,6 @@ exports.getAllRankings = async (req, res) => {
     }
 };
 
-exports.getRanking = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const ranking = await Ranking.findById(id).populate('plushieId');
-        if (!ranking) {
-            return res.status(404).json({ message: "Ranking not found" });
-        }
-        res.status(200).json(ranking);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
 
 exports.updateRanking = async (req, res) => {
     try {
@@ -53,3 +41,41 @@ exports.deleteRanking = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.vote = async (req, res) => {
+    try {
+        const { id } = req.params; // id del peluche o personalización
+        let ranking = await Ranking.findOne({ customizationId: id });
+
+        if (!ranking) {
+            ranking = new Ranking({ customizationId: id, counter: 1 });
+        } else {
+            ranking.counter += 1;
+        }
+
+        ranking.lastUpdated = Date.now();
+        await ranking.save();
+
+        res.status(200).json(ranking);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getRanking = async (req, res) => {
+    try {
+        const rankings = await Ranking.find()
+            .populate({
+                path: 'customizationId',
+                populate: { path: 'plushieId' }
+            })
+            .sort({ counter: -1 });
+
+        console.log('Rankings with populated customizationId and plushieId:', JSON.stringify(rankings, null, 2));
+        res.status(200).json(rankings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+

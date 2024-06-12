@@ -1,23 +1,59 @@
-// controllers/customizationController.js
+//controllers/customizationController.js
 const Customization = require('../models/Customization');
+const Ranking = require('../models/Ranking');
 
-exports.createCustomization = async (req, res) => {
+exports.vote = async (req, res) => {
     try {
-        const { userId, plushieId, color, accessory } = req.body;
-        const newCustomization = new Customization({ userId, plushieId, color, accessory });
-        await newCustomization.save();
-        res.status(201).json(newCustomization);
+        const { id } = req.params; // id de la personalización
+        let ranking = await Ranking.findOne({ customizationId: id });
+
+        if (!ranking) {
+            ranking = new Ranking({ customizationId: id, counter: 1 });
+        } else {
+            ranking.counter += 1;
+        }
+
+        ranking.lastUpdated = Date.now();
+        await ranking.save();
+
+        res.status(200).json(ranking);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
 exports.getAllCustomizations = async (req, res) => {
     try {
-        const customizations = await Customization.find().populate('userId').populate('plushieId');
+        const customizations = await Customization.find().populate('plushieId');
         res.status(200).json(customizations);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getRanking = async (req, res) => {
+    try {
+        const rankings = await Ranking.find()
+            .populate({
+                path: 'customizationId',
+                populate: { path: 'plushieId' }
+            })
+            .sort({ counter: -1 });
+        res.status(200).json(rankings);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.createCustomization = async (req, res) => {
+    try {
+        const userId = req.user.userId; // Obtener userId del token de autenticación
+        const { plushieId, color, accessory } = req.body;
+        const newCustomization = new Customization({ userId, plushieId, color, accessory });
+        await newCustomization.save();
+        res.status(201).json(newCustomization);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 };
 
@@ -52,9 +88,4 @@ exports.deleteCustomization = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
-
-exports.getOptions = async (req, res) => {
-    const options = await CustomizationOptions.find();
-    res.json(options);
 };

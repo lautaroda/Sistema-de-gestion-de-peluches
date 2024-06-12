@@ -4,13 +4,11 @@ const router = express.Router();
 const customizationController = require('../controllers/customizationController');
 const authMiddleware = require('../middleware/authMiddleware');
 
+router.get('/', customizationController.getAllCustomizations);
 router.post('/', authMiddleware, customizationController.createCustomization);
-router.get('/', authMiddleware, customizationController.getAllCustomizations);
-router.get('/:id', authMiddleware, customizationController.getCustomization);
+router.get('/:id', customizationController.getCustomization);
 router.put('/:id', authMiddleware, customizationController.updateCustomization);
 router.delete('/:id', authMiddleware, customizationController.deleteCustomization);
-
-
-router.get('/options', customizationController.getOptions);
+router.post('/vote/:id', customizationController.vote);
 
 module.exports = router;

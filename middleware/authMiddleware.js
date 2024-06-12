@@ -15,5 +15,4 @@ module.exports = (req, res, next) => {
     } else {
         return res.status(401).json({ error: 'Access denied. No token provided or token format is invalid.' });
     }
-    
 };

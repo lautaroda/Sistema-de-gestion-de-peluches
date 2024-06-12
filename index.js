@@ -1,13 +1,15 @@
 // index.js
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
-const connectDB = require('./config/db'); 
+const connectDB = require('./config/db');
 const jwtSecret = process.env.JWT_SECRET;
 
 const app = express();
 
 connectDB();
 
+app.use(cors());
 app.use(express.json());
 
 const userRoutes = require('./routes/userRoutes');
@@ -16,7 +18,6 @@ const customizationRoutes = require('./routes/customizationRoutes');
 const rankingRoutes = require('./routes/rankingRoutes');
 
 app.use('/users', userRoutes);
-
 app.use('/plushies', plushieRoutes);
 app.use('/customizations', customizationRoutes);
 app.use('/rankings', rankingRoutes);

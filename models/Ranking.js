@@ -2,9 +2,9 @@
 const mongoose = require('mongoose');
 
 const rankingSchema = new mongoose.Schema({
-    plushieId: {
+    customizationId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Plushie',
+        ref: 'Customization',
         required: true
     },
     counter: {
