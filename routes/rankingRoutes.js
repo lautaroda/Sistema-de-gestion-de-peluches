@@ -5,10 +5,10 @@ const rankingController = require('../controllers/rankingController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 router.post('/', authMiddleware, rankingController.createRanking);
-router.get('/', rankingController.getRanking);
-router.get('/:id', rankingController.getRanking);
+router.get('/', rankingController.getRanking); // Ruta pública
+router.get('/:id', rankingController.getRanking); // Ruta pública
 router.put('/:id', authMiddleware, rankingController.updateRanking);
 router.delete('/:id', authMiddleware, rankingController.deleteRanking);
-router.post('/vote/:id', rankingController.vote);
+router.post('/vote/:id', rankingController.vote); // Puede ser pública si se desea
 
 module.exports = router;
